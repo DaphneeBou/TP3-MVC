@@ -4,6 +4,7 @@ namespace App\Models;
 abstract class CRUD extends \PDO {
 
     final public function __construct() {
+        // changer les informations au besoin selon la base de donnee et utilisateur)
         parent::__construct('mysql:host=localhost; dbname=gestionnaire_recettes; port=3306; charset=utf8mb4', 'root', '');
     }
 
