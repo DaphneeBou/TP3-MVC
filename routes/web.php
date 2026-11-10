@@ -21,4 +21,10 @@ Route::get('/categorie/show', 'CategorieController@show');
 Route::get('/user/create', 'UserController@create');
 Route::post('/user/create', 'UserController@store');
 
+Route::get('/login', 'AuthController@create');
+Route::post('/login', 'AuthController@store');
+Route::get('/logout', 'AuthController@delete');
+
+Route::get('/journal', 'JournalController@index');
+
 Route::dispatch();

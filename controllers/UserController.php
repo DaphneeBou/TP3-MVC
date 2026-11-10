@@ -5,8 +5,15 @@ use App\Models\User;
 use App\Models\Privilege;
 use App\Providers\View;
 use App\Providers\Validator;
+use App\Providers\Auth;
 
 class UserController {
+
+    // toutes les methodes de ce controleur sont reservees a l'administrateur
+    public function __construct() {
+        Auth::session();
+        Auth::privilege(1);
+    }
 
     public function create() {
         $privilegeModel = new Privilege;

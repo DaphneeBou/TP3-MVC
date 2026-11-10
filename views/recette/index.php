@@ -25,5 +25,7 @@
         {% endfor %}
     </tbody>
 </table>
+{% if guest is empty %}
 <a href="{{base}}/recette/create" class="btn add">Ajouter une nouvelle recette</a>
+{% endif %}
 {{ include('layouts/footer.php') }}

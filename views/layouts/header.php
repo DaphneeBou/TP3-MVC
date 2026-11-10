@@ -19,6 +19,16 @@
                 <li><a href="{{base}}/" class="btn">Accueil</a></li>
                 <li><a href="{{base}}/recettes" class="btn">Mes recettes</a></li>
                 <li><a href="{{base}}/categories" class="btn">Explorez les catégories</a></li>
+                {% if session.user_privilege == 1 %}
+                <li><a href="{{base}}/user/create" class="btn">Nouvel utilisateur</a></li>
+                <li><a href="{{base}}/journal" class="btn">Journal de bord</a></li>
+                {% endif %}
+                {% if guest %}
+                <li><a href="{{base}}/login" class="btn">Connexion</a></li>
+                {% else %}
+                <li class="bonjour">Bonjour {{ session.user_name }}</li>
+                <li><a href="{{base}}/logout" class="btn">Déconnexion</a></li>
+                {% endif %}
             </ul>
         </div>
     </nav>

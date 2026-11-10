@@ -8,6 +8,7 @@ use App\Models\Ingredient;
 use App\Models\RecetteIngredient;
 use App\Providers\View;
 use App\Providers\Validator;
+use App\Providers\Auth;
 
 class RecetteController {
 
@@ -57,12 +58,16 @@ class RecetteController {
     }
 
     public function create() {
+        // connecte seulement (client ou admin)
+        Auth::session();
         $categorieModel = new Categorie;
         $categories = $categorieModel->select('nom');
         View::render('recette/create', ['categories' => $categories]);
     }
 
     public function store(array $data) {
+        // connecte seulement (client ou admin)
+        Auth::session();
         // --- validation des champs de base (meme pattern que le Validator du cours) ---
         $val = new Validator;
         $val->field('titre', $data['titre'] ?? '', 'Titre')->required()->min(3)->max(100);
@@ -104,6 +109,8 @@ class RecetteController {
     }
 
     public function edit($data = []) {
+        // connecte seulement (client ou admin)
+        Auth::session();
         if (!isset($data['id'])) {
             return View::render('erreur', ['message' => "Aucune recette à modifier."]);
         }
@@ -122,6 +129,8 @@ class RecetteController {
     }
 
     public function update(array $data) {
+        // connecte seulement (client ou admin)
+        Auth::session();
         // --- validation des champs de base ---
         $val = new Validator;
         $val->field('titre', $data['titre'] ?? '', 'Titre')->required()->min(3)->max(100);
@@ -165,12 +174,17 @@ class RecetteController {
     }
 
     public function delete(array $data) {
+        // administrateur seulement
+        Auth::session();
+        Auth::privilege(1);
         $recetteModel = new Recette;
         $recetteModel->delete($data['id']);
         return View::redirect('recettes?succes='.urlencode('Recette supprimée avec succès.'));
     }
 
     public function storeIngredient(array $data) {
+        // connecte seulement (client ou admin)
+        Auth::session();
         $ingredientModel = new Ingredient;
         $ingredientId = $data['ingredient_id'] ?? '';
         $nouvelIngredient = trim($data['nouvel_ingredient'] ?? '');
@@ -203,12 +217,16 @@ class RecetteController {
     }
 
     public function deleteIngredient(array $data) {
+        // connecte seulement (client ou admin)
+        Auth::session();
         $riModel = new RecetteIngredient;
         $riModel->deleteByRecetteEtIngredient($data['recette_id'], $data['ingredient_id']);
         return View::redirect('recette/show?id='.$data['recette_id'].'&succes='.urlencode('Ingrédient retiré avec succès.'));
     }
 
     public function storeEtape(array $data) {
+        // connecte seulement (client ou admin)
+        Auth::session();
         $etapeModel = new Etape;
         $etapeModel->insert([
             'recette_id' => $data['recette_id'],
@@ -219,6 +237,8 @@ class RecetteController {
     }
 
     public function deleteEtape(array $data) {
+        // connecte seulement (client ou admin)
+        Auth::session();
         $etapeModel = new Etape;
         $etapeModel->delete($data['id']);
         return View::redirect('recette/show?id='.$data['recette_id'].'&succes='.urlencode('Étape retirée avec succès.'));
