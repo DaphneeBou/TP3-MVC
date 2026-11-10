@@ -18,4 +18,7 @@ Route::post('/recette/etape/delete', 'RecetteController@deleteEtape');
 Route::get('/categories', 'CategorieController@index');
 Route::get('/categorie/show', 'CategorieController@show');
 
+Route::get('/user/create', 'UserController@create');
+Route::post('/user/create', 'UserController@store');
+
 Route::dispatch();

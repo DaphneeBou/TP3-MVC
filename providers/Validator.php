@@ -45,15 +45,28 @@ class Validator {
         if(!empty($this->value) && !filter_var($this->value, FILTER_VALIDATE_INT)){
              $this->errors[$this->key]="$this->name doit etre un nombre entier";
         }
+        return $this;
     }
 
     public function email(){
         if(!empty($this->value) && !filter_var($this->value, FILTER_VALIDATE_EMAIL)){
              $this->errors[$this->key]="Format de $this->name invalide";
         }
+        return $this;
     }
 
-    //-- regles fin
+    public function unique($model){
+        // chemin complet du modele, car on est a l'interieur d'une fonction
+        $model = 'App\\Models\\'.$model;
+        $model = new $model;
+        $unique = $model->unique($this->key, $this->value);
+        if($unique){
+            $this->errors[$this->key]="$this->name existe deja";
+        }
+        return $this;
+    }
+
+   
     public function isSuccess(){
         if(empty($this->errors)) return true;
     }

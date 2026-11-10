@@ -72,6 +72,20 @@ abstract class CRUD extends \PDO {
         return $stmt->execute();
     }
 
+    // Vérifie si une valeur existe déjà (retourne la ligne trouvée, sinon false)
+    final public function unique($field, $value) {
+        $sql = "SELECT * FROM $this->table WHERE $field = :$field";
+        $stmt = $this->prepare($sql);
+        $stmt->bindValue(":$field", $value);
+        $stmt->execute();
+        $count = $stmt->rowCount();
+        if ($count == 1) {
+            return $stmt->fetch();
+        } else {
+            return false;
+        }
+    }
+
     public function getTable(): string {
         return $this->table;
     }
