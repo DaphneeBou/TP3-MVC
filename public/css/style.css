@@ -62,6 +62,12 @@ body {
     gap: 24px;
 }
 
+.navigation .bonjour {
+    color: white;
+    font-weight: 700;
+    align-self: center;
+}
+
 /* --- Titres --- */
 h1, h2, h3 {
     color: var(--couleur-accent-fonce);
@@ -188,6 +194,8 @@ label {
 
 input[type="text"],
 input[type="number"],
+input[type="email"],
+input[type="password"],
 select,
 textarea {
     font-family: inherit;
@@ -435,4 +443,26 @@ footer {
     color: var(--couleur-danger);
     font-size: 0.85rem;
     margin: -6px 0 10px 0;
+}
+
+/* --- Image de recette (TP3) --- */
+.image-recette {
+    display: block;
+    width: 100%;
+    max-height: 400px;
+    object-fit: cover;
+    border-radius: 1rem;
+    margin: 1rem 0;
+}
+
+.image-recette-mini {
+    display: block;
+    max-width: 200px;
+    border-radius: 1rem;
+    margin-bottom: 1rem;
+}
+
+input[type="file"] {
+    display: block;
+    margin-top: 0.5rem;
 }
