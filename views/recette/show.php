@@ -11,6 +11,9 @@
     </div>
 
     <h1 class="recettes">{{ recette.titre }}</h1>
+    {% if recette.image %}
+    <img src="{{asset}}/uploads/{{recette.image}}" class="image-recette" alt="{{ recette.titre }}">
+    {% endif %}
     {% if succes %}
     <p class="message-succes">{{ succes }}</p>
     {% endif %}

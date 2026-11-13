@@ -1,6 +1,6 @@
 {{ include('layouts/header.php', {title: 'Nouvelle recette'}) }}
 <div class="container">
-    <form action="{{base}}/recette/create" method="post">
+    <form action="{{base}}/recette/create" method="post" enctype="multipart/form-data">
         <h2>Nouvelle recette</h2>
         <label>Titre de la recette
             <input type="text" name="titre" value="{{recette.titre}}" required>
@@ -30,6 +30,10 @@
             <input type="number" name="portions" value="{{recette.portions}}" min="1" required>
         </label>
         {% if errors.portions is defined %}<span class="error">{{ errors.portions }}</span>{% endif %}
+        <label>Image (optionnelle, JPG, PNG ou WEBP, 2 Mo maximum)
+            <input type="file" name="image" accept="image/jpeg, image/png, image/webp">
+        </label>
+        {% if errors.image is defined %}<span class="error">{{ errors.image }}</span>{% endif %}
         <input type="submit" class="btn" value="Enregistrer">
     </form>
     <p>*Les étapes de préparation pourront être ajoutées une fois la recette créée.</p>

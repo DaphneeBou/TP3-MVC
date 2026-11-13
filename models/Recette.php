@@ -4,7 +4,7 @@ namespace App\Models;
 class Recette extends CRUD {
     protected $table = 'recette';
     protected $primaryKey = 'id';
-    protected $fillable = ['titre', 'description', 'temps_preparation', 'portions', 'categorie_id'];
+    protected $fillable = ['titre', 'description', 'temps_preparation', 'portions', 'categorie_id', 'image'];
 
     // Liste des recettes avec le nom de leur catégorie (pour recette/index)
     public function selectAllAvecCategorie(): array {

@@ -9,6 +9,7 @@ use App\Models\RecetteIngredient;
 use App\Providers\View;
 use App\Providers\Validator;
 use App\Providers\Auth;
+use App\Providers\Upload;
 
 class RecetteController {
 
@@ -82,8 +83,14 @@ class RecetteController {
             $val->field('categorie_id', '', 'Catégorie')->required();
         }
 
-        if (!$val->isSuccess()) {
-            $errors = $val->getErrors();
+        // verification de l'image (optionnelle)
+        $erreurImage = Upload::verifier($_FILES['image'] ?? null);
+
+        if (!$val->isSuccess() || $erreurImage) {
+            $errors = $val->getErrors() ?? [];
+            if ($erreurImage) {
+                $errors['image'] = $erreurImage;
+            }
             $categorieModel = new Categorie;
             $categories = $categorieModel->select('nom');
             return View::render('recette/create', [
@@ -93,6 +100,9 @@ class RecetteController {
             ]);
         }
 
+        // enregistrement de l'image dans public/uploads (null si aucune image)
+        $image = Upload::enregistrer($_FILES['image'] ?? null);
+
         $recetteModel = new Recette;
         $insert = $recetteModel->insert([
             'titre' => $data['titre'],
@@ -100,6 +110,7 @@ class RecetteController {
             'categorie_id' => $categorieId,
             'temps_preparation' => $data['temps_preparation'],
             'portions' => $data['portions'],
+            'image' => $image,
         ]);
 
         if ($insert) {
@@ -140,8 +151,13 @@ class RecetteController {
         // note : pas de validation "categorie obligatoire" ici, car sur l'edit,
         // ne rien choisir = garder la categorie actuelle (voir trouverOuCreerCategorie)
 
-        if (!$val->isSuccess()) {
-            $errors = $val->getErrors();
+        $erreurImage = Upload::verifier($_FILES['image'] ?? null);
+
+        if (!$val->isSuccess() || $erreurImage) {
+            $errors = $val->getErrors() ?? [];
+            if ($erreurImage) {
+                $errors['image'] = $erreurImage;
+            }
             $categorieModel = new Categorie;
             $categories = $categorieModel->select('nom');
             return View::render('recette/edit', [
@@ -158,14 +174,25 @@ class RecetteController {
             $categorieId = $recetteActuelle['categorie_id'];
         }
 
-        $recetteModel = new Recette;
-        $update = $recetteModel->update([
+        $donnees = [
             'titre' => $data['titre'],
             'description' => $data['description'],
             'categorie_id' => $categorieId,
             'temps_preparation' => $data['temps_preparation'],
             'portions' => $data['portions'],
-        ], $data['id']);
+        ];
+
+        // nouvelle image : on remplace l'ancienne (sinon on garde l'image actuelle)
+        $image = Upload::enregistrer($_FILES['image'] ?? null);
+        if ($image) {
+            $recetteModel = new Recette;
+            $recetteActuelle = $recetteModel->selectId($data['id']);
+            Upload::supprimer($recetteActuelle['image']);
+            $donnees['image'] = $image;
+        }
+
+        $recetteModel = new Recette;
+        $update = $recetteModel->update($donnees, $data['id']);
 
         if ($update) {
             return View::redirect('recette/show?id='.$data['id'].'&succes='.urlencode('Recette modifiée avec succès.'));
@@ -178,6 +205,10 @@ class RecetteController {
         Auth::session();
         Auth::privilege(1);
         $recetteModel = new Recette;
+        $recette = $recetteModel->selectId($data['id']);
+        if ($recette) {
+            Upload::supprimer($recette['image']);
+        }
         $recetteModel->delete($data['id']);
         return View::redirect('recettes?succes='.urlencode('Recette supprimée avec succès.'));
     }
